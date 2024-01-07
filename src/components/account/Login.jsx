@@ -1,7 +1,8 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Box, TextField, Button, styled, Typography } from '@mui/material'
-import {useState} from 'react'
 import logo from '../../images/logo.png'
+import {Link, useNavigate} from 'react-router-dom'
+import axios from 'axios'
 
 const Component = styled(Box)`
     width: 400px;
@@ -47,8 +48,27 @@ const Text = styled(Typography)`
     font-size: 15px;
 `
 
+// const singupInitialValues = {
+//   name: '',
+//   username: '',
+//   password: ''
+// }
+
 function Login() {
   const [account, toggleAccount] = useState('login');
+  // const [signup, setSignup] = useState[singupInitialValues];
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+      await axios.post('http:/localhost:8080/')
+      .then(res => {
+        console.log(res);
+        navigate('/');
+    }).catch(err => console.log(err));
+  }
 
   const toggleSignup = () => {
     account === 'signup' ? toggleAccount('login') : toggleAccount('signup');
@@ -58,6 +78,24 @@ function Login() {
 //     toggleAccount('login');
 //   }
 
+  const handleSignup = (e) => {
+      e.preventDefault();
+
+      axios.post('http://localhost:8080/', {name, email, password})
+      .then(res => {
+          console.log(res);
+          navigate('/');
+      }).catch(err => console.log(err));
+
+    // console.log(e.target.value, e.target.name);
+    // setSignup({...signup, [e.target.name] : e.target.value});
+    // setSignup({
+    //   [e.target.name] : e.target.value,
+    //   [e.target.username] : e.target.value,
+    //   [e.target.password] : e.target.value
+    // });
+  }
+
   return (
     <Component>
       <Box>
@@ -65,18 +103,22 @@ function Login() {
         {
             account === 'login' ?
             <Wrapper>
-                <TextField id="standard-basic" label="Enter Email" variant="standard" />
-                <TextField id="standard-basic" label="Enter Pasword" variant="standard" />
-                <LoginButton variant="contained">Login</LoginButton>    
+                <TextField onChange={e => setEmail(e.target.value)} id="standard-basic" name='username' label="Enter Email" variant="standard" />
+                <TextField onChange={e => setPassword(e.target.value)} type='password' id="standard-basic" name='password' label="Enter Pasword" variant="standard" />
+                <Link to='/tasks'>
+                  <LoginButton variant="contained" onClick={e => handleLogin()}>Login</LoginButton>    
+                </Link>
                 <Text style={{textAlign: 'center'}}>OR</Text>
-                <SignupButton onClick={() => toggleSignup()}>Create An Account</SignupButton>
+                <SignupButton onClick={(e) => toggleSignup(e)}>Create An Account</SignupButton>
             </Wrapper> 
             :
             <Wrapper>
-                <TextField id="standard-basic" label="Enter Name" variant="standard" />
-                <TextField id="standard-basic" label="Enter Email" variant="standard" />
-                <TextField id="standard-basic" label="Enter Pasword" variant="standard" />
-                <SignupButton variant="contained">Signup</SignupButton>
+                <TextField onChange={e => setName(e.target.value)} id="standard-basic" name='name' label="Enter Name" variant="standard" />
+                <TextField onChange={e => setEmail(e.target.value)} id="standard-basic" name='username' label="Enter Email" variant="standard" />
+                <TextField onChange={e => setPassword(e.target.value)} type='password' id="standard-basic" name='password' label="Enter Pasword" variant="standard" />
+                <Link>
+                  <SignupButton onClick={e => handleSignup(e)} variant="contained">Signup</SignupButton>
+                </Link>
                 <Text style={{textAlign: 'center'}}>OR</Text>
                 <LoginButton onClick={() => toggleSignup()} variant="contained">Already have an Account</LoginButton>
             </Wrapper>
